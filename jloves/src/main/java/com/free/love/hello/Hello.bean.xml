@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
+	
+	<bean name="/demo/matmaterial.do" 
+		class="cn.com.jtv.demo.module.matmaterial.web.MatMaterialAction">
+		<description>action注入manager</description>
+		<property name="entityManager" ref="matMaterialManager" />
+	</bean>
+	
+	<bean id="matMaterialManager" scope="request"
+		class="cn.com.jtv.demo.module.matmaterial.manager.MatMaterialManager">
+        <description>manager注入dao</description>
+		<property name="dao" ref="defaultDao" />
+	</bean>
+	
+</beans>

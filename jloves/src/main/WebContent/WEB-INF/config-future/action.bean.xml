@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd       	  
+       	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd"
+	default-lazy-init="true">
+
+	<bean id="springBaseAction" abstract="true" scope="request"
+		class="cn.com.jtv.mf.core.web.mvc.BaseAction">
+		<description>改造 Spring MVC , 支持自定义mapping和通配</description>
+		<property name="mapping">
+			<map merge="true">
+				<entry key="403" value="/mf/error/403.jsp" />
+				<entry key="404" value="/mf/error/404.jsp" />
+				<entry key="500" value="/mf/error/500.jsp" />
+				<entry key="morefilter" value="/mf/module/morefilter/morefilter.jsp" />
+				<entry key="poptree" value="/mf/module/poptree/poptree.jsp" />
+		
+				<entry key="*" value-ref="actionMapping1" />
+				
+				<entry key="/*/*" value-ref="actionMapping2" />
+				<entry key="/*/*/*" value-ref="actionMapping3" />
+			</map>
+		</property>
+	</bean>
+	
+	<util:map id="actionMapping1" map-class="java.util.HashMap">
+		<description>
+			所有action的通配, 给项目组扩展用
+		</description>
+		<!--  
+		<entry key="morefilter" value="/mf/module/morefilter/morefilter.jsp" />
+		-->
+	</util:map>
+	
+	<util:map id="actionMapping2" map-class="java.util.HashMap">
+		<description>
+			/mf/user.do?method=xxx	
+			method=xxx 对应下面的 entry key="xxx",  不写method 则 action 默认转到 key="query"
+
+			/mf/user.do		转到  /mf/module/user/user.jsp
+			/demo/abc.do		转到	/demo/module/abc/abc.jsp
+		 </description>
+		<!-- method=list 进入列表页面会有问题, 所以不再支持 -->
+		<!--<entry key="list" value="/{1}/module/{2}/{2}.jsp" /> -->
+		 
+		<entry key="query" value="/{1}/module/{2}/{2}.jsp" />
+		<entry key="edit" value="/{1}/module/{2}/{2}Edit.jsp" />
+	</util:map>
+	
+	<util:map id="actionMapping3" map-class="java.util.HashMap">
+		<description>
+			/mf/meta/style.do	转到	/mf/module/meta/style.jsp
+			/mf/rbac/role.do		转到	/mf/module/rbac/role.jsp
+		</description>
+		
+		<!-- method=list 进入列表页面会有问题, 所以不再支持 -->
+		<!--<entry key="list" value="/{1}/module/{2}/{3}.jsp" /> -->
+		<entry key="query" value="/{1}/module/{2}/{3}.jsp" />
+		<entry key="edit" value="/{1}/module/{2}/{3}Edit.jsp" />
+	</util:map>
+
+	<bean id="baseAction" abstract="true" parent="springBaseAction"
+		class="cn.com.jtv.mf.core.web.mvc.BaseAction">
+		<description>顶层Action的定义模板</description>
+	</bean>
+
+	<bean id="baseCRUDAction" abstract="true" parent="baseAction"
+		class="cn.com.jtv.mf.core.web.mvc.BaseCRUDAction">
+		<description>通用CRUD</description>
+		<property name="resultDataManager" ref="resultDataManager" />
+		<property name="authorityManager" ref="authorityManager" />
+		<property name="auditManager" ref="auditManager" />
+	</bean>
+
+	<bean id="baseEntityCRUDAction" abstract="true" parent="baseCRUDAction"
+		class="cn.com.jtv.mf.core.web.mvc.BaseEntityCRUDAction">
+		<description>单实体管理</description>
+		<property name="entityManager" ref="defaultEntityManager" />
+		<property name="entityThemeId" value="default" />
+	</bean>
+
+	<bean id="baseEntityPaginationAction" abstract="true"
+		parent="baseEntityCRUDAction" class="cn.com.jtv.mf.core.web.mvc.BaseEntityPaginationAction">
+		<description>实体分页查询管理</description>
+		<property name="paginationManager" ref="paginationManager" />
+		<!-- <property name="exportView" ref="excelView" /> -->
+	</bean>
+
+	<bean id="baseEntityJsonAction" abstract="true"
+		parent="baseEntityPaginationAction" class="cn.com.jtv.mf.core.web.mvc.BaseEntityJsonAction">
+		<description>实体Json处理</description>
+		<property name="jsonBuilder" ref="jsonBuilder" />
+	</bean>
+
+	<bean id="baseTreeAction" abstract="true" parent="baseEntityJsonAction"
+		class="cn.com.jtv.mf.core.web.mvc.BaseTreeAction">
+		<description>通用树CRUD</description>
+		<property name="paginationManager">
+			<null />
+		</property>
+		
+		<property name="treeRootId" >
+			<null />
+		</property>
+		<property name="defaultValueManager" ref="defaultValueManager" />
+	</bean>
+
+
+	<!-- 国际化相关的部分 -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<description>国际化相关的支持,参见I18n类</description>
+		<property name="defaultEncoding" value="utf-8" />
+		<property name="useCodeAsDefaultMessage" value="true" />
+		<property name="basenames" ref="i18nBasenames" />
+	</bean>
+	<util:list id="i18nBasenames" list-class="java.util.ArrayList">
+		<description>可以配多条路径, 但不支持通配</description>
+		<value>cn/com/jtv/mf/locale/lang</value>
+	</util:list>
+
+	<!-- 处理locale切换 -->
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+		<property name="defaultLocale" value="zh_CN" />
+		<property name="cookieName" value="lang" />
+		<property name="cookieMaxAge" value="100000" />
+    	<property name="cookiePath" value="/" />
+	</bean>
+	<!-- 
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="zh_CN" />
+	</bean>
+	-->
+
+</beans>

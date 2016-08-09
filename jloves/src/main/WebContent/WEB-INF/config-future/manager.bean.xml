@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
+	default-lazy-init="true">
+
+	<!-- 
+		从线程安全和性能考虑:
+		action 是 scope="request"
+		dao 是 scope="prototype"
+		
+		而manager在action和dao中间, 所以至少应该为 scope="request"
+		tip: scope="request" 参数在spring里不能继承
+	 -->
+	<bean id="baseManager" abstract="true" scope="request"
+		class="cn.com.jtv.mf.core.manager.support.BaseSingleEntityManagerSupport">
+		<description>manager 公用配置</description>
+		
+		<property name="entityQuery" ref="defaultEntityQuery" />
+		<property name="dao" ref="defaultDao" />
+	</bean>
+	
+	<bean id="defaultEntityManager" parent="baseManager"
+		class="cn.com.jtv.mf.core.manager.support.SingleEntityManagerImpl">
+		<description>默认实体管理器</description>		
+	</bean>
+	
+
+	<bean id="paginationManager"
+		class="cn.com.jtv.mf.core.query.pagination.PaginationManager">
+		<description>分页信息管理器</description>
+		
+		<property name="rowCountPerPageDefault" value="30" />
+	</bean>
+
+</beans>

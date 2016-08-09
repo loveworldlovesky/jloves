@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<!-- 自动扫描且只扫描@Controller -->
+	<!-- 启用批注, 但是Action里必须有 @Controller 批注才行, 否则抛异常? 
+	<context:component-scan base-package="cn.com.jtv" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	-->
+	
+	<!-- 扫描多个路径 -->
+	<!-- 
+	<context:component-scan base-package="org.demo" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+ 	-->
+ 
+ 	<!-- 容器默认的DefaultServletHandler处理 所有静态内容与无RequestMapping处理的URL
+	<mvc:default-servlet-handler/>
+	-->
+
+	<bean id="handlerMapping"
+		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
+		<description>用 bean name="/user.do" 来匹配 URL</description>
+		<property name="detectHandlersInAncestorContexts" value="true" />
+		<property name="interceptors" ref="actionInterceptors" />
+	</bean>
+	
+	<!-- 不设置前后缀. 直接指定完整路径, 这样更灵活 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<description>视图路径解析器</description>
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="" />
+		<property name="suffix" value="" />
+	</bean>
+
+	<!-- action 统一拦截器 -->
+	<util:list id="actionInterceptors" list-class="java.util.ArrayList" >
+<!--		<ref bean="demoInterceptor" />-->
+	</util:list>
+	
+	<bean id="demoInterceptor"
+		class="cn.com.jtv.mf.core.web.interceptor.DemoInterceptor" >
+		<description>演示自定义拦截器</description>
+	</bean>
+
+ 	<!-- 待解决: action转向的jsp不存在时不能产生有效的提示(在日志里输出也行啊!) -->
+	<bean id="exceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<description>出现异常时的处理</description>
+		<property name="defaultErrorView" value="/mf/error/500.jsp" />
+	</bean>
+	
+	
+	<bean id="multipartResolver" 
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<description>文件上传</description>
+		<property name="defaultEncoding" value="utf-8"/>
+		<property name="resolveLazily" value="true" />
+		<property name="maxUploadSize" value="-1" />
+		<!-- <property name="maxInMemorySize" value="1024000" /> -->
+	</bean>
+
+	<!-- spring 参数转换
+		我们是把 parameterMap 转成 DTO -->
+	<!-- 
+    <bean id="conversionService" 
+    	class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="com.mossle.core.spring.DateConverter" />
+			</list>
+		</property>
+	</bean>
+	<mvc:annotation-driven conversion-service="conversionService" >
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+		    	<constructor-arg value="UTF-8" />
+			</bean>
+  		</mvc:message-converters>
+	</mvc:annotation-driven>
+ 	-->
+ 	
+</beans>

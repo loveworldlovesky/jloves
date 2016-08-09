@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd       	  
+       	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
+	default-lazy-init="false">
+
+	<!-- 事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager"
+		p:sessionFactory-ref="sessionFactory" />
+
+	<!-- Hibernate 线程工厂配置 -->
+	<bean id="sessionFactory" depends-on="dbMigration" 
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean" >
+		<property name="dataSource" ref="dataSource"/>
+		<property name="lobHandler" ref="${hibernate.lobHandler}"/>
+		<property name="namingStrategy" ref="namingStrategy"/>
+		<property name="mappingLocations" ref="hibernateMappingLocations"/>
+		<property name="eventListeners" ref="hibernateEventListeners"/>
+		<property name="hibernateProperties" ref="hibernateProperties"/>
+	</bean>
+	
+	<!-- 需要启用hibernate注解时再打开, 对启动性能略有影响-->
+	<!-- 
+	<bean id="sessionFactory" depends-on="dbMigration" 
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="lobHandler" ref="${hibernate.lobHandler}"/>
+		<property name="namingStrategy" ref="namingStrategy"/>
+				
+		<property name="packagesToScan" ref="hibernatePackagesToScan"/>
+		
+		<property name="mappingLocations" ref="hibernateMappingLocations"/>
+		<property name="eventListeners" ref="hibernateEventListeners"/>
+		<property name="hibernateProperties" ref="hibernateProperties"/>
+	</bean>
+ 	-->
+
+	<!-- Hibernate 包级别的注解(扫描package-info.java里的注解信息,在里面可以统一定义UUID主键)
+		p:annotatedPackages-ref="hibernateAnnotatedPackages"
+		有点儿绕弯, 还是在实体里直接定义更直白 		
+	<util:list id="hibernateAnnotatedPackages" list-class="java.util.ArrayList">
+		<value>cn.com.jtv.framework</value>
+	</util:list>
+	-->
+
+	<!-- Hibernate 实体类级别的注解 -->
+	<!-- 
+	<util:list id="hibernatePackagesToScan" list-class="java.util.ArrayList">
+		<value>cn.com.jtv.**.entity</value>
+	</util:list>
+ 	 -->
+ 
+	<!-- Hibernate HBM 映射文件路径 -->
+	<util:list id="hibernateMappingLocations" list-class="java.util.ArrayList">
+		<value>classpath*:cn/com/jtv/**/*.hbm.xml</value>
+	</util:list>
+	
+	<!-- 监听器配置 -->
+	<util:map id="hibernateEventListeners" map-class="java.util.TreeMap">   
+	    <entry key="merge" value-ref="eventListener-merge" />
+	    <entry key="post-insert"  value-ref="eventListener-post-insert" />
+	    <entry key="post-update"  value-ref="eventListener-post-update" />
+	    <entry key="post-delete"  value-ref="eventListener-post-delete" />
+	</util:map>
+	
+	<bean id="eventListener-merge" class="org.springframework.orm.hibernate3.support.IdTransferringMergeEventListener" />
+	<bean id="eventListener-post-insert" class="cn.com.jtv.mf.core.dao.hibernate.EntityListener" >
+		<property name="dictCache" ref="dictCache" />
+		<property name="tableAudit" ref="tableAudit" />
+	</bean>	
+	<alias name="eventListener-post-insert" alias="eventListener-post-update" />
+	<alias name="eventListener-post-insert" alias="eventListener-post-delete" />
+	
+	<bean id="tableAudit" class="cn.com.jtv.mf.core.dao.hibernate.TableAuditImpl">
+		<description>审计表和字段的DML操作</description>
+		<property name="objectCache" ref="objectCache" />
+	</bean>
+	
+	<!-- 拦截器配置(拦截器的粒度比监听器大) -->
+<!-- 	<bean id="hibernateEntityInterceptor" class="cn.com.jtv.mf.core.dao.hibernate.EntityInterceptor" /> -->
+	
+
+	<!-- Hibernate 参数 -->
+	<bean id="hibernateProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.use_sql_comments">${hibernate.use_sql_comments}</prop>
+
+				<prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
+				<prop key="hibernate.cache.provider_class">${hibernate.cache.provider_class}</prop>
+				<prop key="hibernate.cache.provider_configuration_file_resource_path">${hibernate.cache.provider_config}</prop>
+				<prop key="hibernate.cache.use_structured_entries">true</prop>
+
+				<!-- hibernate4 -->
+				<prop key="hibernate.cache.region_prefix">${hibernate.cache.region_prefix}</prop>
+				<prop key="hibernate.cache.region.factory_class">${hibernate.cache.region.factory_class}</prop>
+
+				<!-- 产生缓存的统计信息 -->
+				<prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
+				<prop key="hibernate.show_statistics">${hibernate.show_statistics}</prop>
+				
+
+				<!-- 推荐50至100 , 据说MySQL不支持这个参数,1次检索所有的数据 -->
+				<prop key="hibernate.jdbc.fetch_size">${hibernate.jdbc.fetch_size}</prop>
+
+				<!-- 推荐30至50 -->
+				<prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
+
+				<!-- 开发阶段自动建表用 -->
+<!-- 				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop> -->
+
+				<!-- 用Oracle数据库, 而且有lob处理, 要设置下面的参数为true或者修改batch_size=0 -->
+				<!-- 用10gR2版的jdbc驱动后,这个参数好像可以不设置了. -->
+				<prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<!-- 默认lob处理器 -->
+	<bean id="defaultLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
+
+	<!-- 默认lob处理器在保存oracle的clob时,字符串大于2000会抛异常,需要用oracle的lob处理器才行 -->
+	<bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler"
+		p:nativeJdbcExtractor-ref="nativeJdbcExtractor" />
+	<bean id="nativeJdbcExtractor"
+		class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor" />
+
+	<!-- 实体命名策略 把实体属性 userName 对应的数据库名称自动默认为 user_name (但在1对多关联时,column="xxx"不能省略) -->
+	<bean id="namingStrategy" class="org.hibernate.cfg.ImprovedNamingStrategy" />
+
+
+</beans>

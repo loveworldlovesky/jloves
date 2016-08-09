@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+    default-lazy-init="true">
+
+	<!-- ========================= RESOURCE DEFINITIONS ========================= -->
+
+	<bean id="myDataSource2"
+		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName"
+			value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!-- ========================= Hibernate SessionFactory ========================= -->
+
+	<bean id="mySessionFactory2"
+		class="cn.com.jtv.mf.core.dao.hibernate.util.SessionFactoryBean">
+
+		<property name="dataSource" ref="myDataSource2" />
+
+		<property name="hibernateProperties">
+
+			<props>
+				<!-- 第2个SF不能用p6spy -->
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.OracleDialect
+				</prop>
+			
+				<!-- 不能再用EhCache,与默认的SF冲突 -->
+				<prop key="hibernate.cache.provider_class">
+					org.hibernate.cache.HashtableCacheProvider
+				</prop>
+				
+				
+				<!-- 用于缓存数据字典结果集 -->
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.use_sql_comments">true</prop>
+				
+				<!-- 配置后会报错
+				<prop key="hibernate.query.factory_class">org.hibernate.hql.classic.ClassicQueryTranslatorFactory</prop>
+				 -->
+				 
+				<prop key="hibernate.generate_statistics">true</prop>
+				<prop key="hibernate.show_statistics">true</prop>
+				<prop key="hibernate.cache.use_structured_entries">
+					true
+				</prop>
+				
+				
+				<!-- 
+					推荐fetch_size:50至100 , 据说MySQL不支持这个参数,1次检索所有的数据
+				-->
+				<prop key="hibernate.jdbc.fetch_size">50</prop>
+				
+				<!-- 推荐batch_size:30至50 -->
+				<prop key="hibernate.jdbc.batch_size">30</prop>
+				
+				<!-- 
+					用Oracle数据库, 而且有lob处理, 要设置下面的参数为true或者修改batch_size=0 
+					用10gR2版的jdbc驱动后,这个参数好像可以不设置了.
+				-->
+				<prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
+				
+			</props>
+		</property>
+		
+		<!-- 启用后,调用Hibernate的Merge方法时,会把id反向赋值给传入的对象 -->
+		<!-- 或者调用SaveOrUpdate方法? -->
+		<property name="eventListeners">
+			<map>
+				<entry key="merge">
+					<bean
+						class="org.springframework.orm.hibernate3.support.IdTransferringMergeEventListener" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+
+	<!-- ========================= Transaction Manager ========================= -->	
+	<!-- 事物管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.transaction.jta.JtaTransactionManager" />
+
+</beans>

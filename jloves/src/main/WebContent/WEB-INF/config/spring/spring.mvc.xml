@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	
+	<bean id="handlerMapping"
+		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
+		<description>用 bean name="/user.do" 来匹配 URL</description>
+		<property name="detectHandlersInAncestorContexts" value="true" />
+		<property name="interceptors" ref="actionInterceptors" />
+	</bean>
+	
+	<!-- action 统一拦截器 -->
+	<util:list id="actionInterceptors" list-class="java.util.ArrayList" >
+		<!--		<ref bean="demoInterceptor" />-->
+	</util:list>
+	<!-- 
+	<bean id="demoInterceptor"
+		class="cn.com.jtv.mf.core.web.interceptor.DemoInterceptor" >
+		<description>演示自定义拦截器</description>
+	</bean>
+	 -->
+	<!-- 不设置前后缀. 直接指定完整路径, 这样更灵活 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<description>视图路径解析器</description>
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="" />
+		<property name="suffix" value="" />
+	</bean>
+	
+</beans>

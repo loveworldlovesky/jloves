@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 为确保先升级数据库, 其它 ref="dataSource" 的bean, 需要配置 depends-on="dbMigration" -->
+	
+	<!-- 用于项目数据库升级 -->
+	<!-- 请参照 dbMigration 进行定义, 下面的配置只是占位用 -->
+	<bean id="dbMigrationProject" class="java.lang.String">
+		<description>数据库自动升级</description>
+	</bean>
+	
+	<bean id="dbMigration" depends-on="dbMigrationProject" init-method="migrate"
+		class="org.flywaydb.core.Flyway"	>
+		<description>数据库自动升级</description>
+	    <property name="dataSource" ref="dataSource" />
+	    
+	    <!-- 指定脚本路径, 支持跨数据库 -->
+	    <property name="locations" value="cn/com/jtv/mf/upgrade/${database.name}" />
+	    
+	     <property name="encoding" value="UTF-8" />
+	    
+	    <!-- 关掉已升级脚本的变更校验 -->
+	    <!-- 不小心修改后, 启动校验会报错 -->
+	    <property name="validateOnMigrate" value="false" />
+	    
+	    <!-- 关掉占位符会引起bug, 所以把前缀改掉 -->
+	    <property name="placeholderReplacement" value="true" />
+	    <property name="placeholderPrefix" value="${XXX" />
+	    
+	    <!-- 用于动态建立 schema_version 表 -->
+	    <property name="baselineOnMigrate" value="true" />
+	    <property name="baselineDescription" value="init-db" />
+	   
+	   	<!-- 指定从某个版本开始升级 -->
+    	<property name="baselineVersion" >  
+        	<bean class="org.flywaydb.core.api.MigrationVersion" factory-method="fromVersion">  
+	            <constructor-arg value="0" />  
+	        </bean>  
+    	</property>
+    	 
+	</bean>  
+
+
+	<!-- 用 liquibase 升级 -->
+	<!-- xml 还无法做到100%跨数据库(v3.3) -->
+	<!-- 
+	<bean id="dbMigration" class="liquibase.integration.spring.SpringLiquibase">
+		<description>数据库自动升级</description>
+		<property name="dataSource" ref="dataSource" />
+		<property name="changeLog"
+			value="classpath:cn/com/jtv/mf/upgrade/changelog.xml" />
+		<property name="contexts" value="test, production" />
+	</bean>
+ 	-->
+ 
+</beans>

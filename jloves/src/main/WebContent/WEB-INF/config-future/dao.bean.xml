@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
+	default-lazy-init="true">
+
+	<!-- 
+		考虑到线程安全和性能,甚至同一个线程内dao被分别使用,所以需要设置: scope="prototype"
+		tip: scope 需要在后代里配置, 不能继承
+	-->
+	<bean id="baseDAO" abstract="true" scope="prototype"
+		class="cn.com.jtv.mf.core.dao.hibernate.support.BaseHibernateDaoSupport">
+		<description>通用dao定义的模板</description>
+
+		<!-- 指定数据库连接信息 -->
+		<property name="sessionFactory" ref="sessionFactory" />
+		
+		<!-- 审计管理器 -->
+		<property name="entityAuditManager" ref="entityAuditManager" />
+	</bean>
+
+	<bean id="entityAuditManager"
+		class="cn.com.jtv.mf.core.dao.EntityAuditManagerImpl">
+		<description>实体审计管理器:给 creaetUserId 等赋值</description>
+	</bean>
+	
+	<!-- 
+		由于DAO没有业务逻辑,只是数据的存取,所以这部分可以考虑共用一个实现类! 
+		当然也可以声明自己的DAO,参考: userPictureDAO 		
+	-->
+	<bean id="hibernateBaseDAO" parent="baseDAO" 
+		class="cn.com.jtv.mf.core.dao.hibernate.HibernateDaoImpl">
+		<description>通用dao的实现</description>
+
+	</bean>
+
+	<!-- 定义默认的dao实现 -->
+	<alias name="hibernateBaseDAO" alias="defaultBaseDao" />
+	<alias name="hibernateBaseDAO" alias="defaultDao" />
+	
+</beans>

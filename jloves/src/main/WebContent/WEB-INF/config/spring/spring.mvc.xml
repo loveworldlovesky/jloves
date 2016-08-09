@@ -12,13 +12,9 @@
 		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
 		<description>用 bean name="/user.do" 来匹配 URL</description>
 		<property name="detectHandlersInAncestorContexts" value="true" />
-		<property name="interceptors" ref="actionInterceptors" />
+<!-- 		<property name="interceptors" ref="actionInterceptors" /> -->
 	</bean>
 	
-	<!-- action 统一拦截器 -->
-	<util:list id="actionInterceptors" list-class="java.util.ArrayList" >
-		<!--		<ref bean="demoInterceptor" />-->
-	</util:list>
 	<!-- 
 	<bean id="demoInterceptor"
 		class="cn.com.jtv.mf.core.web.interceptor.DemoInterceptor" >

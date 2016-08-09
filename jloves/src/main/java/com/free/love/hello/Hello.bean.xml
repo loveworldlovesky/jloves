@@ -3,16 +3,15 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	default-lazy-init="true">
 	
-	<bean name="/demo/matmaterial.do" 
-		class="cn.com.jtv.demo.module.matmaterial.web.MatMaterialAction">
+	<bean name="/demo/hello.do" 
+		class="com.free.love.hello.web.HelloAction" scope="request">
 		<description>action注入manager</description>
-		<property name="entityManager" ref="matMaterialManager" />
+		<property name="entityManager" ref="helloManager" />
 	</bean>
 	
-	<bean id="matMaterialManager" scope="request"
-		class="cn.com.jtv.demo.module.matmaterial.manager.MatMaterialManager">
+	<bean id="helloManager" scope="request"
+		class="com.free.love.hello.manager.HelloManager">
         <description>manager注入dao</description>
-		<property name="dao" ref="defaultDao" />
 	</bean>
 	
 </beans>

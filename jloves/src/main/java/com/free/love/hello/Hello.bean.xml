@@ -3,13 +3,13 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	default-lazy-init="true">
 	
-	<bean name="/demo/hello.do" 
-		class="com.free.love.hello.web.HelloAction" scope="request">
+	<bean name="/demo/hello.do"   scope="request"
+		class="com.free.love.hello.web.HelloAction">
 		<description>action注入manager</description>
 		<property name="entityManager" ref="helloManager" />
 	</bean>
 	
-	<bean id="helloManager" scope="request"
+	<bean id="helloManager"  scope="request"
 		class="com.free.love.hello.manager.HelloManager">
         <description>manager注入dao</description>
 	</bean>

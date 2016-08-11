@@ -19,10 +19,11 @@ public class HelloAction   implements Controller{
 			HttpServletResponse response) throws Exception {
 		System.out.println("haha");
 		log.info("info:"+"HelloAction.handleRequest");
-		log.debug("info:"+"HelloAction.handleRequest");
-		log.error("info:"+"HelloAction.handleRequest");
+		log.debug("debug:"+"HelloAction.handleRequest");
+		log.error("error:"+"HelloAction.handleRequest");
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/love/module/hello/key2.html");
+		model.addObject("message", "Hello World!"); 
+		model.setViewName("hello/key1.jsp");
 		return model;
 	}
 

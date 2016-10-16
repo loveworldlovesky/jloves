@@ -35,4 +35,13 @@
 		<property name="suffix" value="" />
 	</bean>
 	
+	<!-- 默认登录/注销体系 -->
+	<mvc:view-controller path="/logon.do" view-name="/login/login.jsp"/>
+	<mvc:view-controller path="/main.do" view-name="/main/main.jsp"/>
+	
+	<!-- 在登录/注销后, 阻止浏览器的前进/后退按钮功能 -->
+	<mvc:view-controller path="/logon1.do" view-name="/mf/module/login/logon.jsp"/>
+	<mvc:view-controller path="/logout.do" view-name="/mf/module/login/logout.jsp"/>
+	<mvc:view-controller path="/relogin.do" view-name="/mf/module/login/relogin.jsp"/>
+	
 </beans>

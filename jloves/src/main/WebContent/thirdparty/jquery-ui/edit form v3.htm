@@ -1,0 +1,135 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+<!---->
+<link href="./jquery-ui.css" rel="stylesheet" />
+<link href="../../mf/css/mf.css" rel="stylesheet" />
+
+<script type="text/javascript" src="../../miniui/scripts/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="./jquery-ui.min.js"></script> 
+
+<style type="text/css">
+	#basic1 {display:inline-block;width:300px;float:left;}
+	#basic2 {display:inline-block;width:750px;float:left;}
+		#others {clear:both;}
+</style>
+
+<script type="text/javascript"> 
+$(function(){ 
+	// TODO: 对 section 创建/删除的管理
+
+
+	// 用于测试调整顺序后能否按顺序得到id
+	var idx = 0;
+	$(".field-li").each(function(idx, el){
+		$(el).attr("id", "id-" + idx);
+	});
+	
+	$("fieldset" ).resizable();
+	
+	//$(".field-input").selectable();
+	$(".field-ul").disableSelection().sortable({
+		appendTo: document.body,	// 能避免滚动条导致的错位问题
+		connectWith : ".field-ul",
+		placeholder : "field-li drop-placeholder",
+		start: sortableStart,
+		over: sortableOver
+	});
+    
+	function sortableStart(event, ui){
+		// 如果item 锁定前面换行, 则占位对象也锁定
+		if ($(ui.item).hasClass("clear-left")){
+			$(ui.placeholder).addClass("clear-left");	
+		}
+		
+		sortableOver(event, ui);
+	}
+	function sortableOver(event, ui){
+		//
+	}
+}); 
+</script> 
+
+</head>
+<body>
+
+<fieldset id="basic1"><legend>basic1</legend>
+	
+	<ul class="field-ul">
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	<li class="field-li"><span class="field-label">col</span><textarea style="width:70%" height="20">abcd</textarea></li>
+	<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	</ul>
+	
+</fieldset>
+
+<fieldset id="basic2"><legend>basic2</legend>
+	
+	<ul class="field-ul">
+		<li class="field-li">
+		<span class="field-label">col</span><input type="text"  value="2013-01-01" />
+		<span class="field-label">至</span><input type="text" value="2013-01-01" />
+		</li>
+		
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="checkbox" /></span></li>
+		
+		<li class="field-li"><span class="field-label">colcolcolcolcolcolcolcol</span><span class="field-input"><input type="text" /></span></li>
+		<li class="field-li"><span class="field-label">这是几个汉字呢几个汉字呢</span><span class="field-input"><input type="text" /></span></li>
+		
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+		<li class="field-li">
+			<span class="field-label">col</span>
+			<span class="field-input">
+				<input type="radio" />男男男<input type="radio" />女女女<input type="radio" />未知未知
+				<input type="radio" />男男男<input type="radio" />女女女<input type="radio" />未知未知
+			</span>
+		</li>
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" style="width:200px" /></span></li>
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+		<li class="field-li"><span class="field-label">col</span><span class="field-input"><input type="text" /></span></li>
+	</ul>
+	
+</fieldset>
+
+
+<fieldset id="others"><legend>others</legend>
+	
+	<ul class="field-ul">
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li clear-left"><span class="field-label">col</span><input type="text" style="width:200px" /></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li field-block"><span class="field-label">col</span><textarea style="width:70%" height="20">abcd</textarea></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+		<li class="field-li"><span class="field-label">col</span><input type="text" /></li>
+	</ul>
+	
+</fieldset>
+
+
+
+</body>
+</html>

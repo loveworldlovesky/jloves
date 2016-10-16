@@ -8,4 +8,12 @@ public class Library {
     public boolean someLibraryMethod() {
         return true;
     }
+    
+    public static void main(String[] args) {
+		
+    	String s = "--";
+    	String[] split = s.split("-",1);
+    	System.out.println(split.length);
+    	
+	}
 }

@@ -1,0 +1,42 @@
+apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'war'
+version = '1.0.0'
+
+// JDK 7
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    jcenter()
+}
+ext{
+	springMvcVersion = '3.2.13.RELEASE'
+	hibernateVersion = '3.6.10.Final'
+	mysqlConnector = '5.1.35'
+	//oJdbc6 = '11.2.0.1.0'//下载不到oracle驱动,采用手动加载
+}
+dependencies {
+	//servlet-api
+    providedCompile 'javax.servlet:servlet-api:2.5' // 编译期
+    providedRuntime 'javax.servlet:jstl:1.2'    // 运行时
+    //依赖包
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.slf4j:slf4j-log4j12:1.7.2'
+    compile 'log4j:log4j:1.2.17'
+    //使用变量时必须用双引号
+    compile "org.springframework:spring-webmvc:${springMvcVersion}"
+    compile "org.springframework:spring-orm:${springMvcVersion}"
+    compile "org.springframework:spring-aspects:${springMvcVersion}"
+    compile "org.hibernate:hibernate-core:${hibernateVersion}"
+    compile "org.hibernate:hibernate-c3p0:${hibernateVersion}"
+    compile "org.javassist:javassist:3.19.0-GA"
+    
+	//compile "mysql:mysql-connector-java:${mysqlConnector}"
+	// ojdbc加载不到,采用本地jar
+	//compile "com.oraclel:ojdbc6:${oJdbc6}"
+	compile files ("lib/oracle-jdbc-6.jar")
+    //compile "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+    //compile "org.hibernate:hibernate-ehcache:${hibernateVersion}"
+    testCompile 'junit:junit:4.12'
+}

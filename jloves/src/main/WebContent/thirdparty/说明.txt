@@ -1,0 +1,18 @@
+第三方组件库说明:
+
+jquery		基础
+				http://jquery.com/
+
+jquery-ui	用于页面设计器拖拽(只是功能子集)
+				http://jqueryui.com/
+
+miniui		前台UI框架
+				在线帮助 http://www.miniui.com/docs/api/index.html
+				在线示例 http://www.miniui.com/demo/
+				
+ckeditor		富文本编辑
+ckfinder		富文本编辑
+
+fileupload	用于ajax文件上传
+
+

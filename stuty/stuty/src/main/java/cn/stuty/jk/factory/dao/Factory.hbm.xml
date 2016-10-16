@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">	
+<hibernate-mapping>
+		<class name="cn.stuty.jk.factory.entity.Factory" 
+	 table="factory_c"	dynamic-update="true" dynamic-insert="true"
+	  optimistic-lock="version">
+        
+		<id name="factoryId">
+		    <generator class="assigned"/>
+	    </id>        
+		<version name="lockVersion" />
+	    
+		<property name="factoryNum"/>
+		<property name="fullName"/>
+		<property name="factoryName"/>
+		<property name="contacts"/>
+		<property name="phone"/>
+		<property name="mobile"/>
+		<property name="fax"/>
+		<property name="cnote"/>
+		<property name="inspector"/>
+		<property name="order_no"/>
+		<property name="createBy"/>
+		<property name="createDept"/>
+		<property name="createTime"/>
+		<property name="updateBy"/>
+		<property name="updateDept"/>
+		<property name="updateTime"/>
+
+    </class>
+</hibernate-mapping>

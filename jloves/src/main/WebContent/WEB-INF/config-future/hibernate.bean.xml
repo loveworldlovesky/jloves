@@ -11,8 +11,8 @@
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager"
 		p:sessionFactory-ref="sessionFactory" />
 
-	<!-- Hibernate 线程工厂配置 -->
-	<bean id="sessionFactory" depends-on="dbMigration" 
+	<!-- 定义Hibernate的SessionFactory -->
+	<bean id="sessionFactory"  
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean" >
 		<property name="dataSource" ref="dataSource"/>
 		<property name="lobHandler" ref="${hibernate.lobHandler}"/>

@@ -1,10 +1,59 @@
-<!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 </head>
 <body>
-111111111
+<script>
+	// IE6,7,8 用最大化方案打开窗口
+	maxopen("loading.html");
+	
+	function maxopen(path){
+		var isMax = isIE678();
+		if (isMax == false){
+			window.location.href = path;
+			return;
+		}
+		
+		var win = openMaxWindow(path);
+		
+		if(!win) promptBlocked() 
+		else closeWindow();
+	}
+
+	// 以窗口尺寸打开窗口, 并隐藏菜单/工具栏
+	function openMaxWindow(path){
+		var features = "menubar=no,location=yes,toolbar=no,status,resizable,scrollbars";
+		var size = ',left=0,top=0,width='+ screen.availWidth +',height='+ screen.availHeight;
+
+		var win = window.open(path, "_blank", features + size);
+		return win;
+	}
+	
+	// 提示弹出窗口被拦截
+	function promptBlocked(){
+		var info = '弹出窗口被浏览器阻止, 请设置为:\r\n\r\n';
+		info += '总是允许来自此站点的弹出窗口\r\n';			
+		alert(info);
+	}
+	
+	// 关闭当前窗口
+	function closeWindow(){
+ 		window.opener = null;
+ 		window.open('', '_self');	// IE7
+ 		window.close();
+	}
+	
+	// IE9/FF不用最大化处理
+	function isIE678(){
+		if (navigator.appName == "Microsoft Internet Explorer"){
+			var ver = navigator.appVersion.split(";");
+			var ver = ver[1].replace(/[ ]/g,"");
+			if (ver == "MSIE6.0" || ver == "MSIE7.0" || ver == "MSIE8.0"){
+				return true;
+			}
+		}
+		return false;
+	}
+</script>
 </body>
 </html>

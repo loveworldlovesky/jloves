@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
+	<!-- 支持 @AspectJ 标记-->
+	<aop:aspectj-autoproxy />
+
+	<!-- 方案1: 用 AOP 配置事务控制 -->
+	<!-- Spring3.0 里 AOP 可以配置在接口上, 但是当接口强制转换为子类, 调用子类的方法时, 会失去事务控制, 所以不能配置在接口上 -->
+	<aop:config proxy-target-class="true">
+		<aop:advisor pointcut="execution(* cn.stuty.jk..manager.*Manager.*(..))" advice-ref="txAdvice" />
+	</aop:config>
+	
+	<!-- 如果需要给其它包切面, 需要另外配置
+	<aop:config proxy-target-class="true">
+		<aop:advisor pointcut="execution(* org.demo..manager.*Manager.*(..))" advice-ref="txAdvice" />
+	</aop:config>
+	 -->
+	 
+	<!-- 以save/insert/update/delete开头的方法名称会进行事务处理, 其他方法不能做事务处理--> 
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save*" />
+			<tx:method name="insert*" />
+			<tx:method name="update*" />
+			<tx:method name="delete*" />
+			<tx:method name="*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+</beans>
